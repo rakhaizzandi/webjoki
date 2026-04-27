@@ -157,6 +157,10 @@ export default function AdminDashboard() {
   const formatDate = (value: string | Date | null | undefined) => {
     if (!value) return '-';
 
+    const fixedValue = typeof value === 'string'
+    ? value.replace(' ', 'T').split('.')[0]
+    : value;
+
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return '-';
 
@@ -256,15 +260,17 @@ export default function AdminDashboard() {
                   {orders.map(o => (
                     <tr key={o.id}>
                       <td>
-                        <div>{o.user_nickname || o.nickname || '-'}</div>
-                        <small>{o.email || '-'}</small>
+                        <div>{o.nickname || o.user?.nickname || '-'}</div>
+                        <small>{o.email || o.user?.email || '-'}</small>
                       </td>
-                      <td>{o.service_id}</td>
-                      <td>{o.package_id}</td>
-                      <td>{o.user_id_ml}</td>
-                      <td>{o.server_id}</td>
-                      <td>{o.payment_method}</td>
 
+                      <td>{o.service_id || o.service?.name || '-'}</td>
+                      <td>{o.package_id || o.package?.name || '-'}</td>
+
+                      <td>{o.user_id_ml || '-'}</td>
+                      <td>{o.server_id || '-'}</td>
+
+                      <td>{o.payment_method || o.payment || '-'}</td>
                       <td>
                         <span className={`${styles.badge} ${styles[o.status]}`}>
                           {o.status}
@@ -312,7 +318,7 @@ export default function AdminDashboard() {
                       </span>
                     </td>
 
-                    <td>{formatDate(user.created_at)}</td>
+                    <td>{formatDate(user.createdAt)}</td>
 
                     <td className={styles.actions}>
                       <button 
