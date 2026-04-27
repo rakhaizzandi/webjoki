@@ -1,5 +1,7 @@
 const { neon } = require('@neondatabase/serverless');
-require('dotenv').config({ path: '.env.local' });
+const loadEnvFile = require('./load-env');
+
+loadEnvFile();
 
 const connectionString =
   process.env.POSTGRES_URL ||

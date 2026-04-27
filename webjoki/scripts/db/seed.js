@@ -1,6 +1,8 @@
 const { neon } = require('@neondatabase/serverless');
 const bcrypt = require('bcryptjs');
-require('dotenv').config({ path: '.env.local' });
+const loadEnvFile = require('./load-env');
+
+loadEnvFile();
 
 const connectionString =
   process.env.POSTGRES_URL ||
