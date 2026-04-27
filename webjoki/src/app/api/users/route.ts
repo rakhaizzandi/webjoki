@@ -11,10 +11,22 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
     
-    const users = await sql`
-      SELECT id, email, nickname, role, created_at 
+    const rows = await sql`
+      SELECT
+        id,
+        id AS "_id",
+        email,
+        nickname,
+        role,
+        created_at,
+        created_at AS "createdAt"
       FROM users ORDER BY created_at DESC
     `;
+
+    const users = rows.map((user) => ({
+      ...user,
+      createdAt: user.createdAt ? new Date(user.createdAt).toISOString() : null,
+    }));
     
     return NextResponse.json(users);
   } catch (error: unknown) {
