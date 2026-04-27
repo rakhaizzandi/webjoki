@@ -32,8 +32,14 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
     
+    const { searchParams } = new URL(request.url);
     const body = await request.json();
-    const { id, status } = body;
+    const id = body.id || searchParams.get('id');
+    const { status } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: 'Order ID required' }, { status: 400 });
+    }
     
     const [updatedOrder] = await sql`
       UPDATE orders 

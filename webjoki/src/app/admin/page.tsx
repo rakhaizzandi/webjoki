@@ -154,6 +154,14 @@ export default function AdminDashboard() {
   const totalOrders = orders.length;
   const pendingOrders = orders.filter(o => o.status === 'pending').length;
   const completedOrders = orders.filter(o => o.status === 'completed').length;
+  const formatDate = (value: string | Date | null | undefined) => {
+    if (!value) return '-';
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '-';
+
+    return date.toLocaleString('id-ID');
+  };
 
   if (!isAdmin) return <div className={styles.loading}>Checking...</div>;
   if (loading) return <div className={styles.loading}>Loading...</div>;
@@ -246,16 +254,16 @@ export default function AdminDashboard() {
 
                 <tbody>
                   {orders.map(o => (
-                    <tr key={o._id}>
+                    <tr key={o.id}>
                       <td>
-                        <div>{o.userId?.nickname}</div>
-                        <small>{o.userId?.email}</small>
+                        <div>{o.user_nickname || o.nickname || '-'}</div>
+                        <small>{o.email || '-'}</small>
                       </td>
-                      <td>{o.serviceId}</td>
-                      <td>{o.packageId}</td>
-                      <td>{o.userIdML}</td>
-                      <td>{o.serverId}</td>
-                      <td>{o.paymentMethod}</td>
+                      <td>{o.service_id}</td>
+                      <td>{o.package_id}</td>
+                      <td>{o.user_id_ml}</td>
+                      <td>{o.server_id}</td>
+                      <td>{o.payment_method}</td>
 
                       <td>
                         <span className={`${styles.badge} ${styles[o.status]}`}>
@@ -263,12 +271,12 @@ export default function AdminDashboard() {
                         </span>
                       </td>
 
-                      <td>{new Date(o.createdAt).toLocaleString()}</td>
+                      <td>{formatDate(o.created_at)}</td>
 
                       <td className={styles.actions}>
-                        <button onClick={() => updateOrderStatus(o._id, 'completed')} className={styles.complete}>✔</button>
-                        <button onClick={() => updateOrderStatus(o._id, 'processing')} className={styles.process}>⏳</button>
-                        <button onClick={() => rejectOrder(o._id)} className={styles.delete}>❌</button>
+                        <button onClick={() => updateOrderStatus(o.id, 'completed')} className={styles.complete}>✔</button>
+                        <button onClick={() => updateOrderStatus(o.id, 'processing')} className={styles.process}>⏳</button>
+                        <button onClick={() => rejectOrder(o.id)} className={styles.delete}>❌</button>
                       </td>
                     </tr>
                   ))}
@@ -294,7 +302,7 @@ export default function AdminDashboard() {
 
               <tbody>
                 {users.map(user => (
-                  <tr key={user._id}>
+                  <tr key={user.id}>
                     <td>{user.email}</td>
                     <td>{user.nickname}</td>
 
@@ -304,7 +312,7 @@ export default function AdminDashboard() {
                       </span>
                     </td>
 
-                    <td>{new Date(user.createdAt).toLocaleString()}</td>
+                    <td>{formatDate(user.created_at)}</td>
 
                     <td className={styles.actions}>
                       <button 
@@ -315,7 +323,7 @@ export default function AdminDashboard() {
                       </button>
 
                       <button
-                        onClick={() => deleteUser(user._id)}
+                        onClick={() => deleteUser(user.id)}
                         className={styles.delete}
                       >
                         Delete
